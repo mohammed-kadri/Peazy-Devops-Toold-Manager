@@ -41,6 +41,9 @@ def read_packages_file(filename):
 def list_installed_packages(packages):
     installed_packages = [package for package in packages if is_apt_package_installed(package)]
 
+def list_supported_packages(packages):
+    return packages
+
 
     return installed_packages
 
@@ -77,7 +80,8 @@ def list():
     elif action == 'Available Updates':
         option2_function()
     elif action == 'Supported Packages':
-        option3_function()
+        for package in list_supported_packages(packages):
+            click.echo(package)
     else:
         click.echo("Invalid option!")
 
