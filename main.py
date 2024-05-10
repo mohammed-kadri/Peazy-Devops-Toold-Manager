@@ -9,7 +9,11 @@ def is_apt_package_installed(package_name):
     try:
         # Run dpkg-query command to check if the package is installed
         subprocess.run(['dpkg-query', '-W', '-f=${Status}', package_name], check=True, stdout=subprocess.PIPE, stderr=subprocess.STDOUT)
-        return True
+        package_version = get_package_version(package_name)
+        if not package_version == '<none>': 
+            return True
+        else:
+            return False
     except subprocess.CalledProcessError:
         return False
 
@@ -40,6 +44,7 @@ def read_packages_file(filename):
 
 def list_installed_packages(packages):
     installed_packages = [package for package in packages if is_apt_package_installed(package)]
+    return installed_packages
 
 def list_supported_packages(packages):
     return packages
@@ -104,14 +109,11 @@ def update():
     if 'Action 3' in actions:
         action3_function()
 
-def option1_function():
-    click.echo("You chose Option 1")
 
 def option2_function():
     click.echo("You chose Option 2")
 
-def option3_function():
-    click.echo(packages)
+
 
 def action1_function():
     click.echo("Action 1 performed")
