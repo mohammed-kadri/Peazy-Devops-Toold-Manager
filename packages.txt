@@ -25,3 +25,4 @@ flux
 tfswitch
 helm
 kustomize
+python3
