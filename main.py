@@ -62,10 +62,35 @@ def print_installed_packages(installed_packages):
     return installed_packages_print_list
 
 
+def install_package(package_name):
+    if package_name == 'terraform':
+        script_path = "./scripts/installation/terraform.sh"
+        try:
+            subprocess.run(['bash', script_path], check=True)
+            click.echo(f"Terraform installation script executed successfully.")
+        except subprocess.CalledProcessError as e:
+            click.echo(f"Error executing terraform installation script: {e}")
+
 
 @click.group()
 def cli():
     pass
+
+
+
+@cli.command()
+@click.argument('package_name', required=False)
+def install(package_name):
+    click.echo(f"Installation")
+    if package_name is None:
+        click.echo(f"Display multiple choice list")
+    else:
+        if package_name not in packages:
+            click.echo(f"⚠️ Sorry, the package you specified is not supported.")
+        elif package_name in list_installed_packages(packages):
+            click.echo(click.style(f"{package_name}", fg='green', bold=True) + " is already installed in your system.")
+        else:
+            install_package(package_name)
 
 @cli.command()
 def list():
