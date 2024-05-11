@@ -56,7 +56,7 @@ def print_installed_packages(installed_packages):
     index = 0
     installed_packages_print_list = []
     for package in installed_packages:
-        installed_packages[index] = '✅ ' + installed_packages[index] + ': ' + get_package_version(package)
+        installed_packages[index] = '✅ ' + click.style(installed_packages[index], fg='green', bold=True) + ': ' + get_package_version(package)
         installed_packages_print_list.append(installed_packages[index])
         index = index + 1
     return installed_packages_print_list
@@ -71,6 +71,15 @@ def install_package(package_name):
         except subprocess.CalledProcessError as e:
             click.echo(f"Error executing terraform installation script: {e}")
 
+    elif package_name == "jenkins":
+        script_path = "./scripts/installation/jenkins.sh"
+        try:
+            subprocess.run(['bash', script_path], check=True)
+            click.echo(f"Jenkins installation script executed successfully.")
+        except subprocess.CalledProcessError as e:
+            click.echo(f"Error executing jenkins installation script: {e}")
+
+# ADD inspect SO the user can view what commands gonna be excuted and maybe changing them
 
 @click.group()
 def cli():
@@ -83,12 +92,11 @@ def cli():
 @cli.command()
 @click.argument('package_name', required=False)
 def install(package_name):
-    click.echo(f"Installation")
     if package_name is None:
         click.echo(f"Display multiple choice list")
     else:
         if package_name not in packages:
-            click.echo(f"⚠️ Sorry, the package you specified is not supported.")
+            click.echo(f"⚠️  Sorry, the package you specified is not supported.")
         elif package_name in list_installed_packages(packages):
             click.echo(click.style(f"{package_name}", fg='green', bold=True) + " is already installed in your system.")
         else:
