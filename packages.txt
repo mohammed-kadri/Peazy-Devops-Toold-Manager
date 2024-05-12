@@ -26,3 +26,5 @@ tfswitch
 helm
 kustomize
 python3
+vscode
+rancher

@@ -80,6 +80,8 @@ def install_package(package_name):
             click.echo(f"Error executing jenkins installation script: {e}")
 
 # ADD inspect SO the user can view what commands gonna be excuted and maybe changing them
+# ADD when git installed user will enter his name and email for config
+
 
 @click.group()
 def cli():
