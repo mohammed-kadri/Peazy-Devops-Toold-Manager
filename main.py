@@ -63,21 +63,14 @@ def print_installed_packages(installed_packages):
 
 
 def install_package(package_name):
-    if package_name == 'terraform':
-        script_path = "./scripts/installation/terraform.sh"
+    if package_name:
+        script_path = f"./scripts/installation/{package_name}.sh"
         try:
             subprocess.run(['bash', script_path], check=True)
-            click.echo(f"Terraform installation script executed successfully.")
+            click.echo(click.style(f"{package_name} installation script executed successfully.",  fg='green', bold=True))
         except subprocess.CalledProcessError as e:
-            click.echo(f"Error executing terraform installation script: {e}")
+            click.echo(f"Error executing {package_name} installation script: {e}")
 
-    elif package_name == "jenkins":
-        script_path = "./scripts/installation/jenkins.sh"
-        try:
-            subprocess.run(['bash', script_path], check=True)
-            click.echo(f"Jenkins installation script executed successfully.")
-        except subprocess.CalledProcessError as e:
-            click.echo(f"Error executing jenkins installation script: {e}")
 
 # ADD inspect SO the user can view what commands gonna be excuted and maybe changing them
 # ADD when git installed user will enter his name and email for config
