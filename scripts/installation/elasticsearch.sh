@@ -1,91 +1,34 @@
 #!/bin/bash
 
-BASE_DIR=$(dirname "$(realpath "$0")")
+# Update package lists
+sudo apt-get update
 
-source "$BASE_DIR/lib/functions.sh"
+# Install required packages
+sudo apt-get install -y apt-transport-https openjdk-11-jre-headless uuid-runtime pwgen
 
-# COLORS
-RED='\033[0;31m'
-GREEN='\033[0;32m'
-YELLOW='\033[1;33m'
-NC='\033[0m'
+# Import Elasticsearch GPG key
+wget -qO - https://artifacts.elastic.co/GPG-KEY-elasticsearch | sudo apt-key add -
 
-main() {
+# Add Elasticsearch repository
+echo "deb https://artifacts.elastic.co/packages/7.x/apt stable main" | sudo tee -a /etc/apt/sources.list.d/elastic-7.x.list
 
-    # Display Bootstrap Elasticsearch banner
-    display_banner
+# Update package lists again
+sudo apt-get update
 
-    # Check OS
-    while :
-    do
-        echo -e "Select your Operating System:\n 1. Linux\n 2. Darwin (macOS)\n 3. Auto-detect\n 4. Quit\r\n"
-        read -p "[Auto-detect]: " ostype
-        case $ostype in
-            1)
-                echo -e "${GREEN}Linux${NC}\r\n"
-                osname="Linux"
-                break
-                ;;
-            2)
-                echo -e  "${GREEN}macOS${NC}\r\n"
-                osname="Darwin"
-                break
-                ;;
-            3)
-                check_os
-                break
-                ;;
-            "")
-                check_os
-                break
-                ;;
-            4)
-                exit 0
-                ;;
-            *)
-                echo -e "${RED}Incorrect input, try again.${NC}\r\n"
-        esac
-    done
+# Install Elasticsearch
+sudo apt-get install -y elasticsearch
 
-    # Check Elasticsearch version
-    check_version "Elasticsearch"
+# Enable and start Elasticsearch service
+sudo systemctl enable elasticsearch
+sudo systemctl start elasticsearch
 
-    # Check installation directory
-    check_install_dir
+# Set elastic user password
+ES_PASSWORD=$(pwgen 15 1)
+echo "Elasticsearch password: $ES_PASSWORD"
+echo "$ES_PASSWORD" | sudo /usr/share/elasticsearch/bin/elasticsearch-reset-password -u elastic -i
 
-    # Kibana alongside Elasticsearch
-    check_kb_standalone
+# Configure Elasticsearch to start automatically on system boot
+sudo systemctl daemon-reload
+sudo systemctl enable elasticsearch.service
 
-    # Download Elasticsearch in the given directory
-    download "Elasticsearch"
-
-    # Download Kibana if requested
-    if [[ $installkb = true ]]; then
-        download "Kibana"
-    fi
-
-    parallel_download # To speed up things
-
-    # Extract Elasticsearch
-    extract "Elasticsearch"
-
-    # Extract Kibana if previously downloaded
-    if [[ $installkb = true ]]; then
-        extract "Kibana"
-    fi
-
-    # Check delete Elasticsearch tarball
-    check_delete "Elasticsearch"
-
-    # Check delete Kibana tarball
-    if [[ $installkb = true ]]; then
-        check_delete "Kibana"
-    fi
-
-    # Start Elasticsearch / Kibana
-    check_start
-
-    echo -e "${YELLOW}Congratulations! You're done!${NC}"
-}
-
-main "$@"
+echo "Elasticsearch installed and started successfully!"
