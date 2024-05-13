@@ -74,7 +74,7 @@ def install_package(package_name):
 
 # ADD inspect SO the user can view what commands gonna be excuted and maybe changing them
 # ADD when git installed user will enter his name and email for config
-
+# aws is not being added to instalation list after it installed, version checked by aws --version
 
 @click.group()
 def cli():
