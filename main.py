@@ -4,7 +4,7 @@ from inquirer import prompt
 import inquirer
 import subprocess
 from yaspin import yaspin
-from yaspin.spinners import Spinners
+from yaspin.spinners import Spinners 
 
 packages = []
 def is_apt_package_installed(package_name):
