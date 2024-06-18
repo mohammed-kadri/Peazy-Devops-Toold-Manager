@@ -3,6 +3,8 @@ from inquirer import Checkbox
 from inquirer import prompt
 import inquirer
 import subprocess
+from yaspin import yaspin
+from yaspin.spinners import Spinners
 
 packages = []
 def is_apt_package_installed(package_name):
@@ -84,11 +86,32 @@ def cli():
 
 
 
+
+
+
 @cli.command()
 @click.argument('package_name', required=False)
 def install(package_name):
+    not_installed = []
+
+    with yaspin(Spinners.arc, text="Loading..") as sp:  
+        not_installed = [package for package in packages if package not in list_installed_packages(packages)]
     if package_name is None:
-        click.echo(f"Display multiple choice list")
+
+        questions = [
+            inquirer.Checkbox('actions',
+                               message="Select packages to install",
+                               choices= not_installed
+            )
+        ]
+        answers = prompt(questions)
+
+        wanted_to_install = answers['actions']
+
+        for package in wanted_to_install:
+            install_package(package)
+
+
     else:
         if package_name not in packages:
             click.echo(f"⚠️  Sorry, the package you specified is not supported.")
