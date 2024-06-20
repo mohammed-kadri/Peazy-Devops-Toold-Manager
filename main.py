@@ -94,7 +94,7 @@ def cli():
 def install(package_name):
     not_installed = []
 
-    with yaspin(Spinners.arc, text="Loading..") as sp:  
+    with yaspin(Spinners.arc, text="Loading...") as sp:  
         not_installed = [package for package in packages if package not in list_installed_packages(packages)]
     if package_name is None:
 
