@@ -114,5 +114,3 @@ The script is written in Python and uses the `click`, `inquirer`, and `yaspin` l
 *   **Testing:** Add unit and integration tests.
 
 
-
-[Your Name/GitHub Profile (Optional)]
